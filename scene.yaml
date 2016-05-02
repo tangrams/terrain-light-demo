@@ -6,6 +6,9 @@
 #         type: Raster
 #         url: https://terrain-preview.mapzen.com/normal/{z}/{x}/{y}.png
 #         max_zoom: 15
+scene:
+    background:
+        color: black
 sources:
     osm: 
         type: TopoJSON
@@ -33,12 +36,12 @@ lights:
         attenuation: 2
         radius: [100, 250]
 styles: 
-    hillshade:
+    terrain:
         base: raster
         shaders:
             blocks:
                 normal: |
-                    normal = color.rgb;
+                    normal = (color.rgb-.5)*2.;
                 color: |
                     color.rgb = vec3(1.0);
                     color.a = 1.0;
@@ -47,7 +50,7 @@ layers:
     terrain:
         data: { source: normals, layer: _default }
         draw:
-            hillshade:
+            terrain:
                 order: 0
 
     earth:
