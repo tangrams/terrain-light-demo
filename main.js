@@ -82,7 +82,7 @@
         'direction_z' : -.5,
         'direction_toggle' : false,
         'direction_diffuse' : 1.,
-        'direction_ambient' : .3,
+        'direction_ambient' : .0,
         'Point' : function() {
             setLight("point");
         },
