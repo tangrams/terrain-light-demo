@@ -1,7 +1,7 @@
 /*jslint browser: true*/
 /*global Tangram, gui */
 
-(function () {
+map = (function () {
     'use strict';
 
     var map_start_location = [37.9258, -121.9543, 12]; // NYC
@@ -255,5 +255,7 @@
             gui.__controllers[i].updateDisplay();
         }
     }
+
+    return map;
 
 }());
