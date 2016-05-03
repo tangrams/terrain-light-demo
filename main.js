@@ -4,7 +4,7 @@
 (function () {
     'use strict';
 
-    var map_start_location = [37.7787, -122.4431, 12]; // NYC
+    var map_start_location = [37.9258, -121.9543, 12]; // NYC
 
     /*** URL parsing ***/
 
@@ -49,9 +49,9 @@
     resizeMap();
 
     function setLight(type) {
-        if (scene.lights.light1.type != type) {
-            scene.config.lights.light1.type = type;
-            scene.updateConfig();
+        // if (scene.lights.light1.type != type) {
+        //     scene.config.lights.light1.type = type;
+        //     scene.updateConfig();
             switch(type) {
                 case "directional":
                     controllerByName("point_toggle").setValue(false);
@@ -61,7 +61,7 @@
                     scene.config.lights.light1.attenuation = controllerByName("attenuation").getValue();
                     scene.updateConfig();
             }
-        }
+        // }
     }
 
     function controllerByName(which) {
@@ -74,25 +74,25 @@
 
     // GUI options for rendering modes/effects
     var controls = {
+        'RESET ALL' : function() {
+            window.location.reload();
+        },
         'Directional' : function() {
             setLight("directional");
         },
         'direction_x' : 0.1,
         'direction_y' : .9,
-        'direction_z' : -.5,
+        'direction_z' : .1,
         'direction_toggle' : false,
-        'direction_diffuse' : '#ffffff',
+        'direction_diffuse' : '#00ffff',
         'Point' : function() {
             setLight("point");
         },
         'point_x' : 0,
         'point_y' : 0,
-        'point_z' : 50,
+        'point_z' : 150,
         'point_toggle' : false,
-        'point_diffuse' : '#ffffff',
-        'attenuation' : 2,
-        'radius_inner' : 100,
-        'radius_outer' : 250,
+        'point_diffuse' : '#ff0000',
 
     };
     var directional_mouse = false;
@@ -117,78 +117,48 @@
         folder.open(); // this just points the arrow downward
 
         // LIGHTS
+        gui.add(controls, 'RESET ALL');
         gui.add(controls, 'Directional').name("Directional Light");
         gui.add(controls, 'direction_x', -1.0, 1.0).name("&nbsp;&nbsp;direction x").onChange(function(value) {
-            setLight("directional");
             scene.lights.light1.direction[0] = value;
             scene.requestRedraw();
         });
         gui.add(controls, 'direction_y', -1.0, 1.0).name("&nbsp;&nbsp;direction y").onChange(function(value) {
-            setLight("directional");
             scene.lights.light1.direction[1] = value;
             scene.requestRedraw();
         });
         gui.add(controls, 'direction_z', -1.0, 0.0).name("&nbsp;&nbsp;direction z").onChange(function(value) {
-            setLight("directional");
             scene.lights.light1.direction[2] = value;
             scene.requestRedraw();
         });
         gui.add(controls, 'direction_toggle').name("&nbsp;&nbsp;mouse control").onChange(function(value) {
-            if (value) {
-                setLight("directional");
-            }
             directional_mouse = value;
         });
         gui.addColor(controls, 'direction_diffuse').name("&nbsp;&nbsp;diffuse").onChange(function(value) {
-            setLight("directional");
             // debugger;
             scene.lights.light1.diffuse = hexToRgb(value);
             scene.requestRedraw();
         });
         gui.add(controls, 'Point').name("Point Light");
         gui.add(controls, 'point_x', -1000, 1000).name("&nbsp;&nbsp;point x").onChange(function(value) {
-            setLight("point");
-            scene.lights.light1.position[0] = value+"px";
+            scene.lights.light2.position[0] = value+"px";
             scene.requestRedraw();
         });
         gui.add(controls, 'point_y', -1000, 1000).name("&nbsp;&nbsp;point y").onChange(function(value) {
-            setLight("point");
-            scene.lights.light1.position[1] = value+"px";
+            scene.lights.light2.position[1] = value+"px";
             scene.requestRedraw();
         });
-        gui.add(controls, 'point_z', -1000, 1000).name("&nbsp;&nbsp;point z").onChange(function(value) {
-            setLight("point");
-            scene.lights.light1.position[2] = value+"px";
+        gui.add(controls, 'point_z', 0, 500).name("&nbsp;&nbsp;point z").onChange(function(value) {
+            scene.lights.light2.position[2] = value+"px";
             scene.requestRedraw();
         });
         gui.add(controls, 'point_toggle').name("&nbsp;&nbsp;mouse control").onChange(function(value) {
-            if (value) {
-                setLight("point");
-            }
             point_mouse = value;
         });
         gui.addColor(controls, 'point_diffuse', 0, 2).name("&nbsp;&nbsp;diffuse").onChange(function(value) {
-            setLight("point");
-            scene.lights.light1.diffuse = hexToRgb(value);
+            scene.lights.light2.diffuse = hexToRgb(value);
             scene.requestRedraw();
         });
-        gui.add(controls, 'attenuation', 0, 10).name("&nbsp;&nbsp;attenuation").onChange(function(value) {
-            setLight("point");
-            scene.lights.light1.attenuation = value;
-            scene.requestRedraw();
-        });
-        gui.add(controls, 'radius_inner', 0, 500).name("&nbsp;&nbsp;radius_inner").onChange(function(value) {
-            setLight("point");
-            scene.lights.light1.radius = [value+"px", (scene.lights.light1.radius === null) ? 0 : scene.lights.light1.radius[1]];
-            scene.requestRedraw();
-        });
-        gui.add(controls, 'radius_outer', 0, 500).name("&nbsp;&nbsp;radius_outer").onChange(function(value) {
-            setLight("point");
-            scene.lights.light1.radius = [(scene.lights.light1.radius === null) ? 0 : scene.lights.light1.radius[0], value+"px"];
-            scene.requestRedraw();
-        });
-
-
     }
 
 
@@ -212,9 +182,10 @@
             scene.requestRedraw();
         }
         if (point_mouse) {
-            scene.lights.light1.position = [xpos,ypos,scene.lights.light1.position[2]];
-            gui.__controllers[7].setValue(scene.lights.light1.position[0]);
-            gui.__controllers[8].setValue(scene.lights.light1.position[1]);
+            // debugger;
+            scene.lights.light2.position = [xpos,ypos,scene.lights.light2.position[2]];
+            gui.__controllers[8].setValue(scene.lights.light2.position[0]);
+            gui.__controllers[9].setValue(scene.lights.light2.position[1]);
             scene.requestRedraw();
         }
 

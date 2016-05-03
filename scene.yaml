@@ -1,11 +1,3 @@
-# sources:
-#     osm: 
-#         type: TopoJSON
-#         url: //vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?api_key=vector-tiles-JUsa0Gc
-#     normals:
-#         type: Raster
-#         url: https://terrain-preview.mapzen.com/normal/{z}/{x}/{y}.png
-#         max_zoom: 15
 scene:
     background:
         color: black
@@ -29,18 +21,14 @@ lights:
     light1:
         type: directional
         direction: [0, 1, -.5]
-        diffuse: '#ffffff'
-        position: [0, 0, 50]
+        diffuse: '#00ffff'
+    light2:
+        type: point
+        diffuse: '#ff0000'
+        position: [0, 0, 150px]
         origin: ground
-        attenuation: 2
-        radius: [100, 250]
-    # light2:
-    #     type: point
-    #     diffuse: '#ffffff'
-    #     position: [0, 0, 50]
-    #     origin: ground
-    #     attenuation: 2
-    #     radius: [100, 250]
+        attenuation: 10
+        radius: [0, 500px]
 styles: 
     terrain:
         base: raster
