@@ -49,15 +49,6 @@
     window.addEventListener('resize', resizeMap);
     resizeMap();
 
-    function setDemo(value) {
-        controllerByName("point_toggle").setValue(false);
-        controllerByName("direction_toggle").setValue(false);
-        scene.updateConfig();
-        if (value === true) {
-            scene.lights.light2.position[2] = value+"px";
-        }
-    }
-
     function controllerByName(which) {
         for (var i = 0; i < gui.__controllers.length; i++) {
             if (gui.__controllers[i].property == which) {
@@ -88,6 +79,7 @@
         'point_toggle' : false,
         'point_diffuse' : '#ff0000',
 
+        'scale' : 1,
         'DEMO' : false
     };
     var directional_mouse = false;
@@ -108,9 +100,9 @@
     function hexToRgb(hex) {
         var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return result ? [
-            parseInt(result[1], 16),
-            parseInt(result[2], 16),
-            parseInt(result[3], 16),
+            parseInt(result[1], 16) / 256,
+            parseInt(result[2], 16) / 256,
+            parseInt(result[3], 16) / 256,
             1
         ] : null;
     }
@@ -144,7 +136,6 @@
             scene.requestRedraw();
         });
         gui.add(controls, 'Point').name("Point Light:");
-        gui.add(controls, 'Point').name("Point Light:");
         gui.add(controls, 'point_x', -1000, 1000).name("&nbsp;&nbsp;point x").onChange(function(value) {
             scene.lights.light2.position[0] = value+"px";
             scene.requestRedraw();
@@ -162,11 +153,15 @@
         });
         gui.addColor(controls, 'point_diffuse', 0, 2).name("&nbsp;&nbsp;diffuse").onChange(function(value) {
             scene.lights.light2.diffuse = hexToRgb(value);
+            console.log(hexToRgb(value))
+            scene.requestRedraw();
+        });
+        gui.add(controls, 'scale', 0, 10).name("terrain scale").onChange(function(value) {
+            scene.styles.terrain.shaders.uniforms.u_scale = value;
             scene.requestRedraw();
         });
         gui.add(controls, 'DEMO').name("DEMO").onChange(function(value) {
             demo_mode = value;
-            setDemo(value);
         });
     }
 
@@ -244,17 +239,18 @@
         B = Math.max(Math.min(B, 1.), 0);
 
         var color = [R, G, B, 1];
+        var direction = [x, y, -.5];
         scene.lights.light1.diffuse = color;
         console.log(color, '=>', rgbToHex(color))
         controls.direction_diffuse = toString(rgbToHex(color));
-        scene.lights.light1.direction = [x, 1, -.5];
+        controls.direction_x = x;
+        controls.direction_y = y;
+        scene.lights.light1.direction = [x, y, -.5];
 
-        scene.animated = true;
-
-          // Iterate over all controllers
-          for (var i in gui.__controllers) {
+        // Iterate over all controllers
+        for (var i in gui.__controllers) {
             gui.__controllers[i].updateDisplay();
-          }
+        }
     }
 
 
