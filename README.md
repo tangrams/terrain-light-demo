@@ -1,5 +1,7 @@
 # lights-cameras-demo
-An interactive demo of lighting terrain using [Tangram](http://github.com/tangrams/tangram).
+An interactive [Tangram](http://github.com/tangrams/tangram) demo of lighting terrain using Mapzen's terrain tiles.
+
+Read more about them here: https://mapzen.com/blog/elevation/
 
 Live demo: http://tangrams.github.io/terrain-light-demo/
 
