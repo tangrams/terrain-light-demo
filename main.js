@@ -153,7 +153,7 @@
         gui.add(controls, 'scale', 0, 10).name("terrain scale").onChange(function(value) {
             scene.styles.terrain.shaders.uniforms.u_scale = value;
         });
-        gui.add(controls, 'DEMO').name("DEMO").onChange(function(value) {
+        gui.add(controls, 'DEMO').name("DEMO MODE").onChange(function(value) {
             demo_mode = value;
         });
 
@@ -165,6 +165,11 @@
         for (var i in gui.__controllers) {
             gui.__controllers[i].updateDisplay();
         }
+
+        if (window.location.search == "?demo") {
+    gui.__controllers[14].setValue(true);
+}
+
     }
 
 
@@ -227,13 +232,11 @@
         var x = Math.sin(t);
         var y = Math.sin(t+(3.14159/2)); // 1/4 offset
         var z = Math.sin(t+(3.14159)); // 1/2 offset
-
-        // scene.lights.light1.direction = [x, y, -.5];
-        var G = y;
         
-        // offset blue and red for sunset and moonlight effect
+        // offset blue and red
         var B = x + Math.abs(Math.sin(t+(3.14159*.5)))/4;
-        var R = y + Math.abs(Math.sin(t*2))/4;
+        var G = y * .5 + .5;
+        var R = y * .5 + .5 + Math.abs(Math.sin(t*2))/4;
         R = Math.max(Math.min(R, 1.), 0);
         G = Math.max(Math.min(G, 1.), 0);
         B = Math.max(Math.min(B, 1.), 0);
@@ -241,7 +244,7 @@
         var color = [R, G, B, 1];
         var direction = [x, y, -.5];
         scene.lights.light1.diffuse = color;
-        // console.log(color, '=>', rgbToHex(color))
+        // console.log([x, y], color, '=>', rgbToHex(color))
         controls.direction_diffuse = rgbToHex(color);
         controls.direction_x = x;
         controls.direction_y = y;
