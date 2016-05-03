@@ -167,9 +167,9 @@
             }
             point_mouse = value;
         });
-        gui.add(controls, 'point_diffuse', 0, 2).name("&nbsp;&nbsp;diffuse").onChange(function(value) {
+        gui.addColor(controls, 'point_diffuse', 0, 2).name("&nbsp;&nbsp;diffuse").onChange(function(value) {
             setLight("point");
-            scene.lights.light1.diffuse = [value, value, value, 1];
+            scene.lights.light1.diffuse = hexToRgb(value);
             scene.requestRedraw();
         });
         gui.add(controls, 'attenuation', 0, 10).name("&nbsp;&nbsp;attenuation").onChange(function(value) {
@@ -213,8 +213,8 @@
         }
         if (point_mouse) {
             scene.lights.light1.position = [xpos,ypos,scene.lights.light1.position[2]];
-            gui.__controllers[8].setValue(scene.lights.light1.position[0]);
-            gui.__controllers[9].setValue(scene.lights.light1.position[1]);
+            gui.__controllers[7].setValue(scene.lights.light1.position[0]);
+            gui.__controllers[8].setValue(scene.lights.light1.position[1]);
             scene.requestRedraw();
         }
 
