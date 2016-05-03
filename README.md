@@ -3,7 +3,7 @@ An interactive demo of lighting terrain using [Tangram](http://github.com/tangra
 
 Live demo: http://tangrams.github.io/terrain-light-demo/
 
-![tangram-demo screenshot](https://cloud.githubusercontent.com/assets/459970/6629470/c007b1de-c8e4-11e4-854e-fd69f5135b3a.png)
+<img width="1063" alt="terrain-lights-demo" src="https://cloud.githubusercontent.com/assets/459970/14998144/7d61753a-1150-11e6-956f-5f98014f5500.png">
 
 ### To run locally:
 
