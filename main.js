@@ -91,7 +91,7 @@
         'point_z' : 50,
         'point_toggle' : false,
         'point_diffuse' : 1,
-        'point_ambient' : .5,
+        'point_ambient' : .0,
         'attenuation' : 2,
         'radius_inner' : 100,
         'radius_outer' : 250,

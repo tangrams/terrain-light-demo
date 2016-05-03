@@ -30,7 +30,7 @@ lights:
         type: directional
         direction: [0, 1, -.5]
         diffuse: 1
-        ambient: .5
+        ambient: 0
         position: [0, 0, 50]
         origin: ground
         attenuation: 2
