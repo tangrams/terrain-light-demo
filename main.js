@@ -82,7 +82,6 @@
         'direction_z' : -.5,
         'direction_toggle' : false,
         'direction_diffuse' : '#ffffff',
-        'direction_ambient' : .0,
         'Point' : function() {
             setLight("point");
         },
@@ -90,8 +89,7 @@
         'point_y' : 0,
         'point_z' : 50,
         'point_toggle' : false,
-        'point_diffuse' : 1,
-        'point_ambient' : .0,
+        'point_diffuse' : '#ffffff',
         'attenuation' : 2,
         'radius_inner' : 100,
         'radius_outer' : 250,
@@ -102,11 +100,12 @@
 
     function hexToRgb(hex) {
         var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ? {
-            r: parseInt(result[1], 16),
-            g: parseInt(result[2], 16),
-            b: parseInt(result[3], 16)
-        } : null;
+        return result ? [
+            parseInt(result[1], 16)/256,
+            parseInt(result[2], 16)/256,
+            parseInt(result[3], 16)/256,
+            1
+        ] : null;
     }
 
     // Create dat GUI
@@ -146,11 +145,6 @@
             scene.lights.light1.diffuse = hexToRgb(value);
             scene.requestRedraw();
         });
-        gui.add(controls, 'direction_ambient', 0, 1).name("&nbsp;&nbsp;ambient").onChange(function(value) {
-            setLight("directional");
-            scene.lights.light1.ambient = [value, value, value, 1];
-            scene.requestRedraw();
-        });
         gui.add(controls, 'Point').name("Point Light");
         gui.add(controls, 'point_x', -1000, 1000).name("&nbsp;&nbsp;point x").onChange(function(value) {
             setLight("point");
@@ -176,11 +170,6 @@
         gui.add(controls, 'point_diffuse', 0, 2).name("&nbsp;&nbsp;diffuse").onChange(function(value) {
             setLight("point");
             scene.lights.light1.diffuse = [value, value, value, 1];
-            scene.requestRedraw();
-        });
-        gui.add(controls, 'point_ambient', 0, 1).name("&nbsp;&nbsp;ambient").onChange(function(value) {
-            setLight("point");
-            scene.lights.light1.ambient = [value, value, value, 1];
             scene.requestRedraw();
         });
         gui.add(controls, 'attenuation', 0, 10).name("&nbsp;&nbsp;attenuation").onChange(function(value) {
