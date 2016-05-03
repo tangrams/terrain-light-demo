@@ -81,7 +81,7 @@
         'direction_y' : .9,
         'direction_z' : -.5,
         'direction_toggle' : false,
-        'direction_diffuse' : 1.,
+        'direction_diffuse' : '#ffffff',
         'direction_ambient' : .0,
         'Point' : function() {
             setLight("point");
@@ -99,6 +99,16 @@
     };
     var directional_mouse = false;
     var point_mouse = false;
+
+    function hexToRgb(hex) {
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : null;
+    }
+
     // Create dat GUI
     var gui = new dat.GUI({ autoPlace: true, width: 300 });
     function addGUI () {
@@ -130,9 +140,10 @@
             }
             directional_mouse = value;
         });
-        gui.add(controls, 'direction_diffuse', 0, 2).name("&nbsp;&nbsp;diffuse").onChange(function(value) {
+        gui.addColor(controls, 'direction_diffuse').name("&nbsp;&nbsp;diffuse").onChange(function(value) {
             setLight("directional");
-            scene.lights.light1.diffuse = [value, value, value, 1];
+            // debugger;
+            scene.lights.light1.diffuse = hexToRgb(value);
             scene.requestRedraw();
         });
         gui.add(controls, 'direction_ambient', 0, 1).name("&nbsp;&nbsp;ambient").onChange(function(value) {
