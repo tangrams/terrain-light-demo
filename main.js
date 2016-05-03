@@ -27,6 +27,7 @@
 
     var layer = Tangram.leafletLayer({
         scene: 'scene.yaml',
+        preUpdate: preUpdate,
         attribution: '<a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/" target="_blank">Mapzen</a>'
     });
 
@@ -48,20 +49,13 @@
     window.addEventListener('resize', resizeMap);
     resizeMap();
 
-    function setLight(type) {
-        // if (scene.lights.light1.type != type) {
-        //     scene.config.lights.light1.type = type;
-        //     scene.updateConfig();
-            switch(type) {
-                case "directional":
-                    controllerByName("point_toggle").setValue(false);
-                case "point":
-                    controllerByName("direction_toggle").setValue(false);
-                    scene.config.lights.light1.radius = [controllerByName("radius_inner").getValue()+"px", controllerByName("radius_outer").getValue()+"px"];
-                    scene.config.lights.light1.attenuation = controllerByName("attenuation").getValue();
-                    scene.updateConfig();
-            }
-        // }
+    function setDemo(value) {
+        controllerByName("point_toggle").setValue(false);
+        controllerByName("direction_toggle").setValue(false);
+        scene.updateConfig();
+        if (value === true) {
+            scene.lights.light2.position[2] = value+"px";
+        }
     }
 
     function controllerByName(which) {
@@ -94,16 +88,29 @@
         'point_toggle' : false,
         'point_diffuse' : '#ff0000',
 
+        'DEMO' : false
     };
     var directional_mouse = false;
     var point_mouse = false;
+    var demo_mode = false;
+
+    function componentToHex(c) {
+        var hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+    }
+    function rgbToHex(c) {
+        var r = c[0] * 256;
+        var g = c[1] * 256;
+        var b = c[2] * 256;
+        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
 
     function hexToRgb(hex) {
         var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return result ? [
-            parseInt(result[1], 16)/256,
-            parseInt(result[2], 16)/256,
-            parseInt(result[3], 16)/256,
+            parseInt(result[1], 16),
+            parseInt(result[2], 16),
+            parseInt(result[3], 16),
             1
         ] : null;
     }
@@ -113,12 +120,10 @@
     function addGUI () {
         gui.domElement.parentNode.style.zIndex = 500;
         window.gui = gui;
-        var folder = gui.addFolder("Click a style:");
-        folder.open(); // this just points the arrow downward
 
         // LIGHTS
         gui.add(controls, 'RESET ALL');
-        gui.add(controls, 'Directional').name("Directional Light");
+        gui.add(controls, 'Directional').name("Directional Light:");
         gui.add(controls, 'direction_x', -1.0, 1.0).name("&nbsp;&nbsp;direction x").onChange(function(value) {
             scene.lights.light1.direction[0] = value;
             scene.requestRedraw();
@@ -135,11 +140,11 @@
             directional_mouse = value;
         });
         gui.addColor(controls, 'direction_diffuse').name("&nbsp;&nbsp;diffuse").onChange(function(value) {
-            // debugger;
             scene.lights.light1.diffuse = hexToRgb(value);
             scene.requestRedraw();
         });
-        gui.add(controls, 'Point').name("Point Light");
+        gui.add(controls, 'Point').name("Point Light:");
+        gui.add(controls, 'Point').name("Point Light:");
         gui.add(controls, 'point_x', -1000, 1000).name("&nbsp;&nbsp;point x").onChange(function(value) {
             scene.lights.light2.position[0] = value+"px";
             scene.requestRedraw();
@@ -159,6 +164,10 @@
             scene.lights.light2.diffuse = hexToRgb(value);
             scene.requestRedraw();
         });
+        gui.add(controls, 'DEMO').name("DEMO").onChange(function(value) {
+            demo_mode = value;
+            setDemo(value);
+        });
     }
 
 
@@ -177,8 +186,8 @@
 
         if (directional_mouse) {
             scene.lights.light1.direction = [xpercent,ypercent*-1,scene.lights.light1.direction[2]];
-            gui.__controllers[1].setValue(scene.lights.light1.direction[0]);
-            gui.__controllers[2].setValue(scene.lights.light1.direction[1]);
+            gui.__controllers[2].setValue(scene.lights.light1.direction[0]);
+            gui.__controllers[3].setValue(scene.lights.light1.direction[1]);
             scene.requestRedraw();
         }
         if (point_mouse) {
@@ -202,8 +211,52 @@
             addGUI();
         });
         layer.addTo(map);
-
     });
+
+    function preUpdate(will_render) {
+        if (!will_render) {
+            return;
+        }
+
+        switch(demo_mode) {
+            case true:
+                daycycle();
+                break;
+        }
+    }
+
+    function daycycle() {
+        var d = new Date();
+        var t = d.getTime()/1000;
+
+        var x = Math.sin(t);
+        var y = Math.sin(t+(3.14159/2)); // 1/4 offset
+        var z = Math.sin(t+(3.14159)); // 1/2 offset
+
+        // scene.lights.light1.direction = [x, y, -.5];
+        var G = y;
+        
+        // offset blue and red for sunset and moonlight effect
+        var B = x + Math.abs(Math.sin(t+(3.14159*.5)))/4;
+        var R = y + Math.abs(Math.sin(t*2))/4;
+        R = Math.max(Math.min(R, 1.), 0);
+        G = Math.max(Math.min(G, 1.), 0);
+        B = Math.max(Math.min(B, 1.), 0);
+
+        var color = [R, G, B, 1];
+        scene.lights.light1.diffuse = color;
+        console.log(color, '=>', rgbToHex(color))
+        controls.direction_diffuse = toString(rgbToHex(color));
+        scene.lights.light1.direction = [x, 1, -.5];
+
+        scene.animated = true;
+
+          // Iterate over all controllers
+          for (var i in gui.__controllers) {
+            gui.__controllers[i].updateDisplay();
+          }
+    }
+
 
 
 }());
