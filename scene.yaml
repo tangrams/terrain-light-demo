@@ -4,24 +4,18 @@ scene:
     animated: true
 
 sources:
-    osm: 
-        type: TopoJSON
-        url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson
+    nextzen:
+        type: MVT
+        url: https://tile.nextzen.org/tilezen/vector/v1/256/all/{z}/{x}/{y}.mvt
         url_params:
-            api_key: mapzen-PvCT6iP
-        max_zoom: 16
+            api_key: your-nextzen-api-key
+        max_zoom: 8
     normals:
         type: Raster
-        url: https://tile.mapzen.com/mapzen/terrain/v1/normal/{z}/{x}/{y}.png
+        url: https://tile.nextzen.org/tilezen/terrain/v1/256/normal/{z}/{x}/{y}.png
         url_params:
-            api_key: mapzen-PvCT6iP
-        max_zoom: 14
-
-cameras:
-    camera1:
-        type: perspective
-        focal_length: 2 # pairs of [zoom, focal len]
-        vanishing_point: [-250, -250] # relative to center of screen, in pixels
+            api_key: your-nextzen-api-key
+        max_zoom: 15
 
 lights:
     light1:
@@ -35,7 +29,7 @@ lights:
         origin: ground
         attenuation: 10
         radius: [0, 500px]
-styles: 
+styles:
     terrain:
         base: raster
         shaders:
@@ -60,14 +54,14 @@ layers:
     earth:
         data: { source: osm }
         draw:
-            lines: 
+            lines:
                 order: 2
                 color: [.3, .3, .3]
                 width: 1px
 
     places:
         data: { source: osm}
-        filter: 
+        filter:
             kind: [city]
         draw:
             text:

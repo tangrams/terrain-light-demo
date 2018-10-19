@@ -38,7 +38,7 @@ map = (function () {
     map.setView(map_start_location.slice(0, 2), map_start_location[2]);
 
     var hash = new L.Hash(map);
-    
+
     // Resize map to window
     function resizeMap() {
         document.getElementById('map').style.width = window.innerWidth + 'px';
@@ -105,8 +105,7 @@ map = (function () {
         return result ? [
             parseInt(result[1], 16) / 255,
             parseInt(result[2], 16) / 255,
-            parseInt(result[3], 16) / 255,
-            1
+            parseInt(result[3], 16) / 255
         ] : null;
     }
 
@@ -176,8 +175,8 @@ map = (function () {
     // mouse position listener
 
     var mouse_monitor = function(e) {
-        var height = document.body.clientHeight;
-        var width = document.body.clientWidth;
+        var height = window.innerHeight;
+        var width = window.innerWidth;
 
         var x = e.clientX;
         var y = e.clientY;
@@ -232,7 +231,7 @@ map = (function () {
         var x = Math.sin(t);
         var y = Math.sin(t+(3.14159/2)); // 1/4 offset
         var z = Math.sin(t+(3.14159)); // 1/2 offset
-        
+
         // offset blue and red
         var B = x + Math.abs(Math.sin(t+(3.14159*.5)))/4;
         var G = y * .5 + .5;
@@ -241,8 +240,8 @@ map = (function () {
         G = Math.max(Math.min(G, 1.), 0);
         B = Math.max(Math.min(B, 1.), 0);
 
-        var color = [R, G, B, 1];
-        var direction = [x, y, -.5];
+        var color = [R, G, B];
+
         scene.lights.light1.diffuse = color;
         // console.log([x, y], color, '=>', rgbToHex(color))
         controls.direction_diffuse = rgbToHex(color);
