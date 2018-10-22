@@ -65,8 +65,8 @@ map = (function () {
         'Directional' : function() {
             setLight("directional");
         },
-        'direction_x' : 0.1,
-        'direction_y' : .9,
+        'direction_x' : 0.,
+        'direction_y' : -1.,
         'direction_z' : .51,
         'direction_toggle' : false,
         'direction_diffuse' : '#00ffff',
@@ -158,7 +158,7 @@ map = (function () {
 
         // reset these to defeat dat.gui's auto-precision setting
         controls.direction_x = 0;
-        controls.direction_y = 1.;
+        controls.direction_y = -1.;
         controls.direction_z = -.5;
         // Iterate over all controllers
         for (var i in gui.__controllers) {
